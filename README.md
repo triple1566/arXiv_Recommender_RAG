@@ -2,12 +2,12 @@
 RAG system for recommending articles using all-MiniLM-L6-v2 and the arXiv Dataset
 
 
-Do:
+**Do:**
 
-git clone https://github.com/triple1566/arXiv_Recommender_RAG.git
-make all
+  git clone https://github.com/triple1566/arXiv_Recommender_RAG.git
+  make all
 
 
-To clean venv:
+**To clean venv:**
 
-make clean
+  make clean
