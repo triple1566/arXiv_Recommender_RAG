@@ -1,8 +1,12 @@
 #must have python installed!
-.PHONY: all clean
+SHELL := /bin/bash
+.PHONY: clean
+PIP= ./.venv/bin/pip
+ACTIVATE= ./.venv/bin/activate
 
-.venv:
-	python3 -m venv .venv
-	pip install -r requirements.txt
+.venv: requirements.txt
+	python3 -m venv ./.venv
+	$(PIP) install -r requirements.txt
+
 clean:
-	rm -rf .venv
+	rm -rf ./.venv
