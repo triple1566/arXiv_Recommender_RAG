@@ -1,3 +1,4 @@
+aniso8601==10.0.0
 annotated-types==0.7.0
 anyio==4.8.0
 appnope==0.1.4
@@ -10,9 +11,11 @@ attrs==25.3.0
 babel==2.17.0
 beautifulsoup4==4.13.3
 bleach==6.2.0
+blinker==1.9.0
 certifi==2025.1.31
 cffi==1.17.1
 charset-normalizer==3.4.1
+click==8.1.8
 comm==0.2.2
 debugpy==1.8.13
 decorator==5.2.1
@@ -21,6 +24,9 @@ distro==1.9.0
 executing==2.2.0
 fastjsonschema==2.21.1
 filelock==3.17.0
+Flask==3.1.0
+Flask-RESTful==0.3.10
+Flask-SQLAlchemy==3.1.1
 fqdn==1.5.1
 fsspec==2025.3.0
 grpcio==1.71.0
@@ -34,8 +40,11 @@ huggingface-hub==0.29.3
 hyperframe==6.1.0
 idna==3.10
 ipykernel==6.29.5
+ipython==9.0.2
+ipython_pygments_lexers==1.1.1
 ipywidgets==8.1.5
 isoduration==20.11.0
+itsdangerous==2.2.0
 jedi==0.19.2
 Jinja2==3.1.6
 jiter==0.9.0
@@ -110,6 +119,7 @@ setuptools==76.0.0
 six==1.17.0
 sniffio==1.3.1
 soupsieve==2.6
+SQLAlchemy==2.0.39
 stack-data==0.6.3
 sympy==1.13.1
 terminado==0.18.1
@@ -130,9 +140,5 @@ wcwidth==0.2.13
 webcolors==24.11.1
 webencodings==0.5.1
 websocket-client==1.8.0
+Werkzeug==3.1.3
 widgetsnbextension==4.0.13
-flask==3.1.0
-werkzeug==3.1.3
-flask_restful==0.3.10
-aniso8601==10.0.0
-flask_sqlalchemy==3.1.1
