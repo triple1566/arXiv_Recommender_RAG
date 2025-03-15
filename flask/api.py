@@ -7,7 +7,7 @@ DEBUG=True
 
 # Load the LLM Model and initialize the arXiv data
 sample_size=5000
-path, df, model_encoder, qdrant_client = initialize_arxiv_data(df, model_encoder, qdrant_client, sample_size)
+path, df, model_encoder, qdrant_client, model_loaded = initialize_arxiv_data(df, model_encoder, qdrant_client, sample_size)
 
 #Configure flask app
 app=Flask(__name__)
@@ -34,26 +34,28 @@ class LLMSearch(Resource):
         userPrompt = args['prompt']
         limit = args['limit']
         #create reponse based on user prompt
-        hits = search_arxiv_papers(user_prompt=userPrompt, limit_search_to=limit)
+        if model_loaded:
+            hits = search_arxiv_papers(user_prompt=userPrompt, limit_search_to=limit)
+            #load response into a list
+            result=[]
+            for hit in hits:
+                paper={
+                    'id':fields.Integer,
+                    'title':fields.String,
+                    'authors':fields.String,
+                    'abstract':fields.String,
+                }
+                paper['id']=hit.payload["id"]
+                paper['title']=hit.payload["title"]
+                paper['authors']=hit.payload["authors"]
+                paper['abstract']=hit.payload["abstract"]
+                result.append(paper)
 
-        #load response into a list
-        result=[]
-        for hit in hits:
-            paper={
-                'id':fields.Integer,
-                'title':fields.String,
-                'authors':fields.String,
-                'abstract':fields.String,
-            }
-            paper['id']=hit.payload["id"]
-            paper['title']=hit.payload["title"]
-            paper['authors']=hit.payload["authors"]
-            paper['abstract']=hit.payload["abstract"]
-            result.append(paper)
-
-        if len(result)==0:
-            abort(404,"Oops, something went wrong!")
-        return result, 200
+            if len(result)==0:
+                abort(404,"Oops, something went wrong!")
+            return jsonify(result), 200
+        else:
+            return jsonify("Model not loaded"), 500
 
 #add our LLMSearch class to our api entry point
 api.add_resource(LLMSearch, '/api/generateresponse')

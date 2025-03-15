@@ -58,7 +58,9 @@ def initialize_arxiv_data(df, model_encoder, qdrant_client, sample_size):
             ) for index, doc in enumerate(data_in_dict)
         ]
     )
-    return path, df, model_encoder, qdrant_client
+    print("Data uploaded successfully")
+    model_loaded=True
+    return path, df, model_encoder, qdrant_client, model_loaded
 
 #Refactored for backend
 def search_arxiv_papers(user_prompt, limit_search_to=10):#-> String
