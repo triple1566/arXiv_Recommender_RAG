@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
-from flask_restful import Resource, Api, reqparse, fields, marshal_with, abort
+from flask_restful import Resource, Api, reqparse, fields, abort
 from RAGmodel import df, model_encoder, qdrant_client, initialize_arxiv_data, search_arxiv_papers
-import asyncio
+
 
 DEBUG=False
 
@@ -15,16 +15,8 @@ app=Flask(__name__)
 api=Api(app)
 
 
-arXivPaper = [{
-    'id':fields.Integer,
-    'title':fields.String,
-    'authors':fields.String,
-    'abstract':fields.String
-}]
-
 #This class inherits from flask_restful's abstract RESOURCE class
 class LLMSearch(Resource):
-    @marshal_with(arXivPaper)
     def get(self):
         user_args = reqparse.RequestParser()
         user_args.add_argument('prompt', type=str, required=True, help="User prompt is required")
@@ -55,7 +47,7 @@ class LLMSearch(Resource):
                 abort(404,"Oops, something went wrong!")
             for paper in result:
                 print(paper)
-            api_response = jsonify(result)
+            api_response = {"item":result}
             print(api_response)
             return api_response, 200
         else:
