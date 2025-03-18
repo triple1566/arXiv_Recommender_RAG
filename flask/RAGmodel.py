@@ -7,28 +7,34 @@ import pandas as pd
 
 # Variables to export
 df=pd.DataFrame
-model_encoder=SentenceTransformer
-qdrant_client=QdrantClient
+model_encoder = SentenceTransformer('all-MiniLM-L6-v2')
+qdrant_client = QdrantClient(":memory:")
 
 # Load the model
 def initialize_arxiv_data(df, model_encoder, qdrant_client, sample_size):
+
     # Download latest version of dataset
+    print("Downloading dataset...")
     path = kagglehub.dataset_download("Cornell-University/arxiv")
+    print("Dataset downloaded successfully into " + path)
+
     # Read into Pandas DataFrame
+    print("Loading data into pandas dataframe...")
     df = pd.read_json(path+'/arxiv-metadata-oai-snapshot.json', lines=True)
+    print("Data loaded into pandas dataframe successfully")
     print(df.head())
 
     # Preprocess Data
     # Filter out NAN category
+    print("Filtering data...")
     df = df[df['categories'].notna()]
     # Filter out withdrawn papers
     df = df[df['abstract'].notna()]
     df = df[~df['abstract'].str.contains('withdrawn', case=False, regex=False)]
 
     # Create vector database client and model client
-    model_encoder = SentenceTransformer('all-MiniLM-L6-v2')
-    qdrant_client = QdrantClient(":memory:")
-    # Create collection to store 
+    # Create collection to store
+    print("Creating arxiv collection...")
     qdrant_client.recreate_collection(
         collection_name = "arxiv",
         vectors_config = models.VectorParams(
@@ -47,7 +53,10 @@ def initialize_arxiv_data(df, model_encoder, qdrant_client, sample_size):
     # data_in_dict = df.to_dict(orient='records')
     # Convert sample of the dataframe to a dictionary
     data_in_dict = df.head(sample_size).to_dict(orient='records')
+    print(data_in_dict)
 
+
+    print("Uploading data...")
     qdrant_client.upload_points(
         collection_name = "arxiv",
         points=[
@@ -63,17 +72,16 @@ def initialize_arxiv_data(df, model_encoder, qdrant_client, sample_size):
     return path, df, model_encoder, qdrant_client, model_loaded
 
 #Refactored for backend
-def search_arxiv_papers(user_prompt, limit_search_to=10):#-> String
-    # This will later be read from the user when the app is running on flask
+def search_arxiv_papers(model_encoder, qdrant_client, user_prompt, limit_search_to):#-> List of Dicts
     query_prompt = "You are an AI agent searching for arXiv papers based on the following instructions: " + user_prompt
-    
+    print("Query Prompt: " + query_prompt)
     # Search based on user prompt
     hits = qdrant_client.search(
         collection_name = "arxiv",
         query_vector=model_encoder.encode(query_prompt),
         limit=limit_search_to
     )
-    
+
     # Print Queried Outputs
     for hit in hits:
         print("TITLE: " + hit.payload["title"] + '\n\n', 
@@ -84,4 +92,5 @@ def search_arxiv_papers(user_prompt, limit_search_to=10):#-> String
     
     # Return search results
     search_results = [hit.payload for hit in hits]
+    print(search_results)
     return search_results
